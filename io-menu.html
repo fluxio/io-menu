@@ -50,7 +50,11 @@ Example:
     <template if="{{tooltip}}">
       <div id="tooltip">{{tooltip}}</div>
     </template>
-    <io-string style="display: {{search ? 'block' : 'none'}}" id="search" value="{{searchString}}" updateImmediate></io-string>
+    <io-string style="display: {{search ? 'block' : 'none'}}" id="search"
+      updateImmediate
+      value="{{searchString}}"
+      on-keydown="{{onSearchKeyUp}}">
+    </io-string>
     <template if="{{expanded || fixed}}">
       <template if="{{search}}">
         <hr />
@@ -208,7 +212,8 @@ Example:
         'mousedown': 'onDown',
         'mousemove': 'onHover',
         'touchmove': 'onHover',
-        'io-menu-option-clicked': 'collapse'
+        'io-menu-option-clicked': 'collapse',
+        'io-change-option': 'onCnahgeOption'
       },
       ready: function() {
         this._expand = this.expand.bind(this);
@@ -301,14 +306,118 @@ Example:
         }
       },
 
+      onSearchKeyUp: function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        if (event.which == 38) {
+          this.fire('io-change-option', { option: this.$.search, key: 'last' });
+        } else if (event.which == 40) {
+          this.fire('io-change-option', { option: this.$.search, key: 'first' });
+        } else if (event.which == 9) {
+          this.fire('io-change-option', { option: this.$.search, key: 'first' });
+        }
+      },
+
+      onCnahgeOption: function(event) {
+        event.stopPropagation();
+
+        var scope = this;
+        var option = event.detail.option;
+        var display = window.getComputedStyle(option).getPropertyValue('display');
+
+        var optionsParentMenu = option.parentNode.host;
+        var options = Array.prototype.slice.call(optionsParentMenu.querySelectorAll('::shadow > io-menu-option'));
+        if (optionsParentMenu.search) {
+          options.unshift(optionsParentMenu.$.search.$.value);
+          optionsParentMenu.$.search.$.value.focus();
+        }
+
+        function previous() {
+          var newOption = options[(options.indexOf(option) + options.length - 1) % (options.length)];
+          newOption.expanded = true;
+          newOption.focus();
+          option.expanded = false;
+        }
+        function next() {
+          var newOption = options[(options.indexOf(option) + 1) % (options.length)]
+          newOption.expanded = true;
+          newOption.focus();
+          option.expanded = false;
+        }
+        function up() {
+          if (scope.parentNode.host.localName == 'io-menu-option') {
+            scope.parentNode.host.expanded = true;
+            scope.parentNode.host.focus();
+            option.expanded = false;
+          }
+        }
+        function down() {
+          var submenu = Array.prototype.slice.call(option.shadowRoot.querySelectorAll('io-menu'));
+          var options = [];
+          if (submenu.length) {
+            options = Array.prototype.slice.call(submenu[0].shadowRoot.querySelectorAll('io-menu-option'));
+            if (options.length) {
+              options[0].expanded = true;
+              options[0].focus();
+            }
+          }
+        }
+        function first() {
+          var options = Array.prototype.slice.call(optionsParentMenu.querySelectorAll('::shadow > io-menu-option'));
+          var newOption = options[0];
+          newOption.expanded = true;
+          newOption.focus();
+          option.expanded = false;
+        }
+        function last() {
+          var options = Array.prototype.slice.call(optionsParentMenu.querySelectorAll('::shadow > io-menu-option'));
+          var newOption = options[options.length - 1];
+          newOption.expanded = true;
+          newOption.focus();
+          option.expanded = false;
+        }
+        function tab() {
+          // TODO: handle submenus better
+          var i = (options.indexOf(option) + 1);
+          next();
+        }
+
+        switch (event.detail.key) {
+          // TODO: fix back to main menu on menu-bar-menu
+          case 'up':
+              if (display == 'inline-block') up();
+              else previous();
+            break;
+          case 'down':
+              if (display == 'inline-block') down();
+              else next();
+            break;
+          case 'left':
+              if (display == 'inline-block') previous();
+              else up();
+            break;
+          case 'right':
+              if (display == 'inline-block') next();
+              else down();
+            break;
+          case 'first':
+            first();
+            break;
+          case 'last':
+            last();
+            break;
+          case 'tab':
+            tab();
+            break;
+        }
+
+      },
       collapseFromOverlay: function(event) {
         if (event.path[0] !== overlayLayer) return;
         this.collapse(event);
       },
       collapse: function(event) {
         this.expanded = false;
-        previousOption = null;
-        previousParent = null;
         this.collapseOptions();
       },
       collapseOptions: function() {
@@ -317,6 +426,8 @@ Example:
             this.optionElems[i].expanded = false;
           }
         }
+        previousOption = null;
+        previousParent = null;
       },
 
       expand: function(event) {
@@ -339,6 +450,9 @@ Example:
         if (option._menu) option._menu.collapseOptions();
         this.collapseOptions();
         option.expanded = true;
+        // setTimeout(function() {
+        // }, 150);
+          option.focus();
         this.fire('io-menu-option-expanded', {
           option: option,
           label: option.label,
@@ -348,16 +462,19 @@ Example:
       },
 
       expandedChanged: function() {
+        previousOption = null;
+        previousParent = null;
         if (this.expanded) {
           this.style.visibility = 'hidden';
           setTimeout(this.nudge.bind(this), 1);
-          if (this.search) {
-            this.searchString = '';
-            this.$.search.$.value.focus();
-          }
-          if (!this.isSubmenu()) {
-            this.openOverlay();
-          }
+          setTimeout(function() {
+            if (this.search) {
+              this.searchString = '';
+              this.$.search.$.value.focus();
+            }
+            
+          }.bind(this), 1);
+          this.openOverlay();
           this.startAnimation();
         } else {
           this.closeOverlay();
@@ -400,7 +517,6 @@ Example:
           var overflow = (rect.bottom - window.innerHeight) + MARGIN;
           this.style.top = parseInt(style.top) - Math.ceil(overflow * scrollSpeed) - 1 + 'px';
         }
-
       },
 
       updateOptionElems: function() {
@@ -464,14 +580,21 @@ Example:
         return this.parentNode.host && this.parentNode.host.localName == 'io-menu-option';
       },
       openOverlay: function() {
-        overlayLayer.addElement(this);
-        overlayLayer.opened = this.expanded;
-        overlayLayer.addEventListener('click', this._collapseFromOverlay);
+        if (!this.isSubmenu()) {
+          overlayLayer.addElement(this);
+          overlayLayer.opened = this.expanded;
+          overlayLayer.addEventListener('click', this._collapseFromOverlay);
+          this.__inOverlay = true;
+          this.collapseOptions();
+        }
       },
       closeOverlay: function() {
-        overlayLayer.removeElement(this);
-        overlayLayer.opened = this.expanded;
-        overlayLayer.removeEventListener('click', this._collapseFromOverlay);
+        if (!this.isSubmenu() && this.__inOverlay) {
+          overlayLayer.removeElement(this);
+          overlayLayer.opened = this.expanded;
+          overlayLayer.removeEventListener('click', this._collapseFromOverlay);
+          this.__inOverlay = false;
+        }
       },
     });
 

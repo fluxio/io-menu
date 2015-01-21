@@ -40,6 +40,11 @@ html /deep/ io-menu-option[expanded] {
   /*background: #69F;*/
   /*color: #fff;*/
 }
+html /deep/ io-menu-option[expanded]:focus {
+  /*outline: 0;*/
+  /*background: #666;*/
+  /*color: #fff;*/
+}
 html /deep/ io-menu-option::shadow > core-icon {}
 
 html /deep/ io-menu::shadow > #tooltip {

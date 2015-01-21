@@ -168,9 +168,22 @@ It is automatically created by io-menu.
         }
       },
       keydownAction: function(event) {
-        if (this.disabled) return;
+        event.stopPropagation();
+        event.preventDefault();
         if (event.which == 13) {
-          this.tapAction(event);
+          if (this.disabled) return;
+          // this.fireAction(event);
+          this.tapAction(event); // TODO: test
+        } else if (event.which == 37) {
+          this.fire('io-change-option', { option: this, key: 'left' });
+        } else if (event.which == 38) {
+          this.fire('io-change-option', { option: this, key: 'up' });
+        } else if (event.which == 39) {
+          this.fire('io-change-option', { option: this, key: 'right' });
+        } else if (event.which == 40) {
+          this.fire('io-change-option', { option: this, key: 'down' });
+        } else if (event.which == 9) {
+          this.fire('io-change-option', { option: this, key: 'tab' });
         }
       },
       update: function() {

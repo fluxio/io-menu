@@ -42,18 +42,6 @@
 :host([horizontal])::shadow > io-menu-option {
   display: inline-block;
 }
-io-menu-option {
-  display: block;
-  padding: 0.3em;
-  border-radius: 0.1em;
-}
-io-menu-option:focus {
-  outline: 0;
-}
-io-menu-option[expanded] {
-  background: #999;
-  color: #fff;
-}
 :host([horizontal])::shadow > hr {
   /* TODO: implement vertical divider */
   display: none;
