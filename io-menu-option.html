@@ -130,11 +130,12 @@ It is automatically created by io-menu.
          */
         expanded: {value: false, reflect: true},
 
+        disabled: {value: false, reflect: true},
         // TODO
         active: {value: false, reflect: true},
       },
       observe: {
-        'options label icon action active expanded' : 'update'
+        'options label icon action active disabled expanded' : 'update'
       },
       eventDelegates: {
         'keydown': 'keydownAction',
@@ -187,9 +188,9 @@ It is automatically created by io-menu.
         }
       },
       update: function() {
-        this.active = (this.action && true) ||
-          (this.arguments && true) ||
-          (this.options && this.options.length);
+        this.active = (this.action && !this.disabled) ||
+          (this.arguments && !this.disabled) ||
+          (this.options && this.options.length && !this.disabled);
         // TODO: timeout?
         this.rect = this.getBoundingClientRect();
       }

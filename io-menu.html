@@ -69,6 +69,7 @@ Example:
             action="{{option.action}}"
             button="{{option.button}}"
             arguments="{{option.arguments}}"
+            disabled="{{option.disabled}}"
             tooltip="{{option.tooltip}}"
             autoExpand="{{option.autoExpand || autoExpand}}"
             horizontal="{{option.horizontal}}">
@@ -450,9 +451,6 @@ Example:
         if (option._menu) option._menu.collapseOptions();
         this.collapseOptions();
         option.expanded = true;
-        // setTimeout(function() {
-        // }, 150);
-          option.focus();
         this.fire('io-menu-option-expanded', {
           option: option,
           label: option.label,
