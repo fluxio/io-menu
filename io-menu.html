@@ -156,7 +156,7 @@ Example:
 
         // TODO
         context: {value: false, reflect: true},
-        contextParent: null,
+        _contextParent: null,
 
         // TODO: change to disabled reflected
         enabled: true,
@@ -435,12 +435,11 @@ Example:
         if (!this.enabled) return; //todo
         if (this.requireCtrl && !event.ctrlKey) return; //todo
         event.preventDefault();
-        this.expanded = true;
-        if (this._contextParent) {
-          var rect = this._contextParent.getBoundingClientRect();
-          this.style.top = event.y + 2 - rect.top + 'px';
-          this.style.left = event.x + 2 - rect.left + 'px';
+        if (this.context) {
+          this.style.top = event.y + 2 + 'px';
+          this.style.left = event.x + 2 + 'px';
         }
+        this.expanded = true;
       },
       expandPrimary: function(event) {
         if (!this.usePrimary) return;
