@@ -309,7 +309,6 @@ Example:
 
       onSearchKeyUp: function(event) {
         event.stopPropagation();
-        event.preventDefault();
         if (event.which == 38) {
           this.fire('io-change-option', { option: this.$.search, key: 'last' });
         } else if (event.which == 40) {
