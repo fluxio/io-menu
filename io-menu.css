@@ -1,5 +1,6 @@
 :host {
   font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+  font-size: 13px;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -32,9 +33,9 @@
   top: 0;
   left: 100%;
 }
-
-
-
+:host(:not([horizontal])) {
+  padding: 0.25em 0;
+}
 :host([horizontal])::shadow > io-menu-option::shadow > io-menu {
   top: 100%;
   left: 0;
@@ -61,7 +62,7 @@ hr {
 :host > #search::shadow > .io-bundle-value {
   display: block;
   border: 1px solid rgba(0, 0, 0, 0.25);
-  margin: 0.25em;
+  margin: 0 0.25em;
   padding: 0.3em;
   background: white;
 }
