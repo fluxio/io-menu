@@ -146,6 +146,7 @@ It is automatically created by io-menu.
       ready: function() {
         function stopPropagation(event) { event.stopPropagation(); event.preventDefault(); }
         PolymerGestures.addEventListener(this, 'down', stopPropagation);
+        PolymerGestures.addEventListener(this, 'touchstart', stopPropagation);
         PolymerGestures.addEventListener(this, 'mousedown', stopPropagation);
       },
       tapAction: function(event) {
