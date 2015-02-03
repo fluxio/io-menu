@@ -183,7 +183,7 @@ Example:
          * TODO
          */
         search: {value: false, reflect: true},
-        searchString: {value: "", reflect: true},
+        searchString: '',
         filteredOptions: [],
         /**
          * Tooltip to be displayed with the option
@@ -418,6 +418,7 @@ Example:
       },
       collapse: function(event) {
         this.expanded = false;
+        this.searchString = '';
         this.collapseOptions();
       },
       collapseOptions: function() {
@@ -465,7 +466,6 @@ Example:
           setTimeout(this.nudge.bind(this), 1);
           setTimeout(function() {
             if (this.search) {
-              this.searchString = '';
               this.$.search.$.value.focus();
             }
             
