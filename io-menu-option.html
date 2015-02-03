@@ -43,7 +43,9 @@ It is automatically created by io-menu.
         issubmenu>
       </io-menu>
     </template>
-    <template if="{{icon}}"><core-icon icon="{{icon}}"></core-icon></template>&nbsp;{{label}}&nbsp;
+    <template if="{{icon}}"><core-icon icon="{{icon}}"></core-icon></template>
+    <span id="label">{{label}}</span>
+    <!-- <template if="{{options.length}}"><core-icon icon="chevron-right"></core-icon></template> -->
   </template>
   <script type="text/javascript">
     Polymer('io-menu-option', {
@@ -144,6 +146,7 @@ It is automatically created by io-menu.
       ready: function() {
         function stopPropagation(event) { event.stopPropagation(); event.preventDefault(); }
         PolymerGestures.addEventListener(this, 'down', stopPropagation);
+        PolymerGestures.addEventListener(this, 'touchstart', stopPropagation);
         PolymerGestures.addEventListener(this, 'mousedown', stopPropagation);
       },
       tapAction: function(event) {

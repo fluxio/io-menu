@@ -86,8 +86,6 @@ Example:
     var timeout;
     var hoveredMenu;
 
-    var MARGIN = 14;
-
     var overlayLayer = document.createElement('io-menu-overlay-layer');
 
     /**
@@ -427,8 +425,9 @@ Example:
             this.optionElems[i].expanded = false;
           }
         }
-        previousOption = null;
-        previousParent = null;
+        // TODO: test
+        // previousOption = null;
+        // previousParent = null;
       },
 
       expand: function(event) {
@@ -462,7 +461,7 @@ Example:
         previousOption = null;
         previousParent = null;
         if (this.expanded) {
-          this.style.visibility = 'hidden';
+          if (!this.fixed) this.style.visibility = 'hidden';
           setTimeout(this.nudge.bind(this), 1);
           setTimeout(function() {
             if (this.search) {
@@ -482,12 +481,12 @@ Example:
           var rect = this.getBoundingClientRect();
           var style = window.getComputedStyle(this);
           // nudge up
-          var bottomDist = rect.bottom + MARGIN - window.innerHeight;
+          var bottomDist = rect.bottom - window.innerHeight;
           if (bottomDist > 0) {
             this.style.top = parseInt(style.top) - bottomDist + 'px';
           }
           // nudge left
-          var rightDist = rect.right + MARGIN - window.innerWidth;
+          var rightDist = rect.right - window.innerWidth;
           if (rightDist > 0) {
             if (this.isSubmenu()) {
               this.style.left = - rect.width + 'px';
@@ -504,13 +503,13 @@ Example:
         if (this.fixed) return;
         var rect = this.getBoundingClientRect();
         var style = window.getComputedStyle(this);
-        if (tempY < 100 && rect.top < MARGIN) {
+        if (tempY < 100 && rect.top < 0) {
           var scrollSpeed = (100 - tempY) / 2000;
-          var overflow = rect.top - MARGIN;
+          var overflow = rect.top;
           this.style.top = parseInt(style.top) - Math.ceil(overflow * scrollSpeed) + 1 + 'px';
-        } else if (tempY > window.innerHeight - 100 && rect.bottom > window.innerHeight - MARGIN) {
+        } else if (tempY > window.innerHeight - 100 && rect.bottom > window.innerHeight) {
           var scrollSpeed = (100 - (window.innerHeight - tempY)) / 2000;
-          var overflow = (rect.bottom - window.innerHeight) + MARGIN;
+          var overflow = (rect.bottom - window.innerHeight);
           this.style.top = parseInt(style.top) - Math.ceil(overflow * scrollSpeed) - 1 + 'px';
         }
       },
