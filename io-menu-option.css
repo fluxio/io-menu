@@ -26,10 +26,15 @@
 #label {
   margin: 0 0.8em 0 0;
 }
+#secondary-label {
+  color: #aaa;
+}
 core-icon {
   margin-top: -0.25em;
   padding: 0;
   vertical-align: middle;
   width: 1.3em !important;
   height: 1.3em !important;
+  float: right;
+  margin: 0px;
 }

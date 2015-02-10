@@ -45,7 +45,8 @@ It is automatically created by io-menu.
     </template>
     <template if="{{icon}}"><core-icon icon="{{icon}}"></core-icon></template>
     <span id="label">{{label}}</span>
-    <!-- <template if="{{options.length}}"><core-icon icon="chevron-right"></core-icon></template> -->
+    <template if="{{options.length}}"><core-icon icon="chevron-right"></core-icon></template>
+    <template if="{{secondaryLabel}}"><div id="secondary-label">{{secondaryLabel}}</div></template>
   </template>
   <script type="text/javascript">
     Polymer('io-menu-option', {
@@ -77,6 +78,15 @@ It is automatically created by io-menu.
          * @default ''
          */
         label: {value: '', reflect: true},
+
+        /**
+         * Secondary label/information to be displayed below the primary label.
+         *
+         * @attribute secondaryLabel
+         * @type string
+         * @default ''
+         */
+        secondaryLabel: {value: '', reflect: true},
 
         /**
          * Icon to be displayed with the option

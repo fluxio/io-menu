@@ -65,6 +65,7 @@ Example:
           <io-menu-option
             options="{{option.options}}"
             label="{{option.label}}"
+            secondaryLabel="{{option.secondaryLabel}}"
             icon="{{option.icon}}"
             action="{{option.action}}"
             button="{{option.button}}"
@@ -212,7 +213,7 @@ Example:
         'mousemove': 'onHover',
         'touchmove': 'onHover',
         'io-menu-option-clicked': 'collapse',
-        'io-change-option': 'onCnahgeOption'
+        'io-change-option': 'onChangeOption'
       },
       ready: function() {
         this._expand = this.expand.bind(this);
@@ -316,7 +317,7 @@ Example:
         }
       },
 
-      onCnahgeOption: function(event) {
+      onChangeOption: function(event) {
         event.stopPropagation();
 
         var scope = this;
