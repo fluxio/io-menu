@@ -423,7 +423,16 @@ Example:
       collapseOptions: function() {
         if (this.optionElems && this.optionElems.length) {
           for (var i = this.optionElems.length; i--;) {
-            this.optionElems[i].expanded = false;
+            var option = this.optionElems[i];
+            if (option.expanded) {
+              option.expanded = false;
+              this.fire('io-menu-option-collapsed', {
+                option: option,
+                label: option.label,
+                action: option.action,
+                arguments: option.arguments
+              });
+            }
           }
         }
         // TODO: test
