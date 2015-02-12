@@ -472,15 +472,14 @@ Example:
         previousParent = null;
         if (this.expanded) {
           if (!this.fixed) this.style.visibility = 'hidden';
-          setTimeout(this.nudge.bind(this), 1);
           setTimeout(function() {
+            this.nudge();
             if (this.search) {
               this.$.search.$.value.focus();
             }
-            
+            this.openOverlay();
+            this.startAnimation();            
           }.bind(this), 1);
-          this.openOverlay();
-          this.startAnimation();
         } else {
           this.closeOverlay();
           this.stopAnimation();
