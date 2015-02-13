@@ -71,6 +71,7 @@ Example:
             button="{{option.button}}"
             arguments="{{option.arguments}}"
             disabled="{{option.disabled}}"
+            keepOpen="{{option.keepOpen}}"
             tooltip="{{option.tooltip}}"
             autoExpand="{{option.autoExpand || autoExpand}}"
             horizontal="{{option.horizontal}}">
@@ -136,6 +137,15 @@ Example:
         fixed: {value: false, reflect: true},
 
         /**
+         * Should the menu stay open when an action is selected/clicked?
+         *
+         * @attribute keepOpen
+         * @type boolean
+         * @default false
+         */
+        keepOpen: {value: false, reflect: true},
+
+        /**
          * Number of milliseconds before swithcing options when cursor is moving sideways.
          *
          * @attribute holdTime
@@ -184,6 +194,7 @@ Example:
         search: {value: false, reflect: true},
         searchString: '',
         filteredOptions: [],
+
         /**
          * Tooltip to be displayed with the option
          *
@@ -212,7 +223,7 @@ Example:
         'mousedown': 'onDown',
         'mousemove': 'onHover',
         'touchmove': 'onHover',
-        'io-menu-option-clicked': 'collapse',
+        'io-menu-option-clicked': 'handleAction',
         'io-change-option': 'onChangeOption'
       },
       ready: function() {
@@ -411,6 +422,12 @@ Example:
         }
 
       },
+      handleAction: function(event) {
+        if (!this.keepOpen) {
+          this.collapse(event);
+        }
+        event.stopPropagation();
+      },
       collapseFromOverlay: function(event) {
         if (event.path[0] !== overlayLayer) return;
         this.collapse(event);
@@ -463,7 +480,8 @@ Example:
           option: option,
           label: option.label,
           action: option.action,
-          arguments: option.arguments
+          arguments: option.arguments,
+          tooltip: option.tooltip
         });
       },
 
