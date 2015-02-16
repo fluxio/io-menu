@@ -434,7 +434,6 @@ Example:
       },
       collapse: function(event) {
         this.expanded = false;
-        this.searchString = '';
         this.collapseOptions();
       },
       collapseOptions: function() {
@@ -488,6 +487,7 @@ Example:
       expandedChanged: function() {
         previousOption = null;
         previousParent = null;
+        this.searchString = '';
         if (this.expanded) {
           if (!this.fixed) this.style.visibility = 'hidden';
           setTimeout(function() {
