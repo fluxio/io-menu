@@ -423,10 +423,11 @@ Example:
 
       },
       handleAction: function(event) {
-        if (!this.keepOpen) {
+        if (this.keepOpen) {
+          event.stopPropagation();
+        } else {
           this.collapse(event);
         }
-        event.stopPropagation();
       },
       collapseFromOverlay: function(event) {
         if (event.path[0] !== overlayLayer) return;
