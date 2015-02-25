@@ -42,12 +42,6 @@ adding/remvinf io-menu elements to overlay.
   var rect, style;
 
   Polymer({
-    eventDelegates: {
-      'scroll': 'scrollAction',
-      'mousewheel': 'scrollAction',
-      'touchmove': 'scrollAction',
-      'DOMMouseScroll': 'scrollAction'
-    },
     addElement: function(element) {
       this.cacheElementStyle(element);
       this.super(arguments);
@@ -92,10 +86,6 @@ adding/remvinf io-menu elements to overlay.
     removeLayoutReplacement: function(element) {
       element.__layoutReplacement.parentNode.removeChild(element.__layoutReplacement);
       delete element.__layoutReplacement;
-    },
-    scrollAction: function(event) {
-      event.preventDefault();
-      event.stopPropagation();
     }
   });
 
