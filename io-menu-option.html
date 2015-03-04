@@ -208,6 +208,8 @@ It is automatically created by io-menu.
           this.fire('io-change-option', { option: this, key: 'down' });
         } else if (event.which == 9) {
           this.fire('io-change-option', { option: this, key: 'tab' });
+        } else if (event.which == 27) {
+          this.fire('io-change-option', { option: this, key: 'close' });
         }
       },
       update: function() {
