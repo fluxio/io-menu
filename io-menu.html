@@ -427,8 +427,8 @@ Example:
         }
 
       },
-      handleAction: function(event) {
-        if (this.keepOpen) {
+      handleAction: function(event, details) {
+        if (this.keepOpen || details.keepOpen) {
           event.stopPropagation();
         } else {
           this.collapse(event);
