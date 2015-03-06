@@ -59,25 +59,27 @@ Example:
       <template if="{{search}}">
         <hr />
       </template>
-      <template repeat="{{option in (filteredOptions.length ? filteredOptions : sortedOptions.length ? sortedOptions : options)}}">
-        <template if="{{option.type == 'divider'}}"><hr /></template>
-        <template if="{{option.type != 'divider'}}">
-          <io-menu-option
-            options="{{option.options}}"
-            label="{{option.label}}"
-            secondaryLabel="{{option.secondaryLabel}}"
-            icon="{{option.icon}}"
-            action="{{option.action}}"
-            button="{{option.button}}"
-            arguments="{{option.arguments}}"
-            disabled="{{option.disabled}}"
-            keepOpen="{{option.keepOpen}}"
-            tooltip="{{option.tooltip}}"
-            autoExpand="{{option.autoExpand || autoExpand}}"
-            horizontal="{{option.horizontal}}">
-          </io-menu-option>
+      <div id="optionsWrapper">
+        <template repeat="{{option in currentOptions}}">
+          <template if="{{option.type == 'divider'}}"><hr /></template>
+          <template if="{{option.type != 'divider'}}">
+            <io-menu-option
+              options="{{option.options}}"
+              label="{{option.label}}"
+              secondaryLabel="{{option.secondaryLabel}}"
+              icon="{{option.icon}}"
+              action="{{option.action}}"
+              button="{{option.button}}"
+              arguments="{{option.arguments}}"
+              disabled="{{option.disabled}}"
+              keepOpen="{{option.keepOpen}}"
+              tooltip="{{option.tooltip}}"
+              autoExpand="{{option.autoExpand || autoExpand}}"
+              horizontal="{{option.horizontal}}">
+            </io-menu-option>
+          </template>
         </template>
-      </template>
+      </div>
     </template>
   </template>
   <script type="text/javascript">
@@ -226,6 +228,9 @@ Example:
         'io-menu-option-clicked': 'handleAction',
         'io-change-option': 'onChangeOption'
       },
+      computed: {
+        'currentOptions': '(filteredOptions.length ? filteredOptions : sortedOptions.length ? sortedOptions : options)'
+      },
       ready: function() {
         this._expand = this.expand.bind(this);
         this._collapse = this.collapse.bind(this);
@@ -337,15 +342,24 @@ Example:
         var option = event.detail.option;
         var display = window.getComputedStyle(option).getPropertyValue('display');
 
-        var optionsParentMenu = option.parentNode.host;
-        var options = Array.prototype.slice.call(optionsParentMenu.querySelectorAll('::shadow > io-menu-option'));
+        // Get access to the parent menu for this option.
+        // The search box isn't wrapped, so the parentMenu is one level up.
+        var menuEl = option.parentNode;
+        if (menuEl.id == 'optionsWrapper') {
+            // For wrapped options, the parentMenu is another level up.
+            menuEl = menuEl.parentNode;
+        }
+        var optionsParentMenu = menuEl.host;
+
+        // Get all the option's siblings.
+        var options = optionsParentMenu.getOptionEls();
         if (optionsParentMenu.search) {
           options.unshift(optionsParentMenu.$.search.$.value);
           optionsParentMenu.$.search.$.value.focus();
         }
-
         function previous() {
-          var newOption = options[(options.indexOf(option) + options.length - 1) % (options.length)];
+          var newOption =
+              options[(options.indexOf(option) + options.length - 1) % (options.length)];
           newOption.expanded = true;
           newOption.focus();
           option.expanded = false;
@@ -364,10 +378,10 @@ Example:
           }
         }
         function down() {
-          var submenu = Array.prototype.slice.call(option.shadowRoot.querySelectorAll('io-menu'));
+          var submenu = option.shadowRoot.querySelectorAll('io-menu');
           var options = [];
           if (submenu.length) {
-            options = Array.prototype.slice.call(submenu[0].shadowRoot.querySelectorAll('io-menu-option'));
+            options = submenu[0].shadowRoot.querySelectorAll('io-menu-option');
             if (options.length) {
               options[0].expanded = true;
               options[0].focus();
@@ -375,14 +389,14 @@ Example:
           }
         }
         function first() {
-          var options = Array.prototype.slice.call(optionsParentMenu.querySelectorAll('::shadow > io-menu-option'));
+          var options = optionsParentMenu.getOptionEls();
           var newOption = options[0];
           newOption.expanded = true;
           newOption.focus();
           option.expanded = false;
         }
         function last() {
-          var options = Array.prototype.slice.call(optionsParentMenu.querySelectorAll('::shadow > io-menu-option'));
+          var options = optionsParentMenu.getOptionEls();
           var newOption = options[options.length - 1];
           newOption.expanded = true;
           newOption.focus();
@@ -427,8 +441,12 @@ Example:
         }
 
       },
-      handleAction: function(event) {
-        if (this.keepOpen) {
+      getOptionEls: function() {
+        var menuOptionsQuery = '::shadow > #optionsWrapper > io-menu-option';
+        return Array.prototype.slice.call(this.querySelectorAll(menuOptionsQuery));
+      },
+      handleAction: function(event, details) {
+        if (this.keepOpen || details.keepOpen) {
           event.stopPropagation();
         } else {
           this.collapse(event);
