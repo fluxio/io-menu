@@ -514,12 +514,9 @@ Example:
         this.searchString = '';
         if (this.expanded) {
           if (!this.fixed) this.style.visibility = 'hidden';
-
           // Fire asynchronously so that nudge is aware of the window bounds.
           this.async(function() {
             this.nudge();
-            this.openOverlay();
-            this.startAnimation();
             if (this.search) {
               // Fire asynchronously so that search box is in context and no other elements can take
               // focus from it during the process of showing the menu.
@@ -528,6 +525,8 @@ Example:
               });
             }
           });
+          this.openOverlay();
+          this.startAnimation();
         } else {
           this.closeOverlay();
           this.stopAnimation();
