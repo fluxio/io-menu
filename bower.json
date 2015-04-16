@@ -1,12 +1,12 @@
 {
   "name": "io-menu",
-  "version": "0.1.12",
+  "version": "0.2.0",
   "homepage": "http://akirodic.com/io/io-menu",
   "authors": [
     "Aleksandar Rodic <aleksandar.xyz@gmail.com>"
   ],
   "description": "A custom menu element with a simple API and lots of customization options",
-  "main": "io-bundle.html",
+  "main": "io-menu.html",
   "keywords": [
     "I/O",
     "menu",
@@ -17,7 +17,7 @@
   "license": "Apache 2.0",
   "dependencies": {
     "polymer": "Polymer/polymer#~0.5.5",
-    "io-bundle": "arodic/io-bundle#~0.6.6",
+    "io-value": "arodic/io-value#~0.7.0",
     "core-icons": "Polymer/core-icons#~0.5.5",
     "core-overlay": "Polymer/core-overlay#~0.5.5"
   }

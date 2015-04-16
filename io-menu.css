@@ -59,7 +59,7 @@ hr {
   display: block;
 }
 
-:host > #search::shadow > .io-bundle-value {
+:host > #search::shadow > .io-editor {
   display: block;
   border: 1px solid rgba(0, 0, 0, 0.25);
   margin: 0 0.25em;
@@ -67,7 +67,7 @@ hr {
   background: white;
 }
 
-:host > #search::shadow > .io-bundle-value:empty:after {  
+:host > #search::shadow > .io-editor:empty:after {
   content: "Search...";
 }
 

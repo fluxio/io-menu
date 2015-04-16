@@ -20,8 +20,8 @@ You should never need to create this element explicitly.
 It is automatically created by io-menu.
 
 @element io-menu-option
-@homepage https://github.com/arodic/io-bundle
-@demo http://akirodic.com/io/io-bundle/demo.html
+@homepage https://github.com/arodic/io-menu
+@demo http://akirodic.com/io/io-menu/demo.html
 @blurb Menu option used internally by io-menu.
 @status alpha
 -->
@@ -29,7 +29,7 @@ It is automatically created by io-menu.
 <link rel="import" href="../core-icons/core-icons.html">
 <link rel="import" href="../core-icon/core-icon.html">
 
-<polymer-element name="io-menu-option" tabindex="0" class="io-bundle">
+<polymer-element name="io-menu-option" tabindex="0">
   <template>
     <link href="io-menu-option.css" rel="stylesheet" type="text/css" shim-shadowdom>
     <template if="{{expanded && (options.length || tooltip)}}">

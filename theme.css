@@ -15,7 +15,7 @@ html /deep/ io-menu {
   color: #333;*/
 }
 
-html /deep/ io-menu::shadow > #search::shadow > .io-bundle-value {
+html /deep/ io-menu::shadow > #search::shadow > .io-editor {
 /*  display: block;
   border: 1px solid rgba(0, 0, 0, 0.25);
   margin: 0.25em;
