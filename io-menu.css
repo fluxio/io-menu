@@ -67,7 +67,7 @@ hr {
   background: white;
 }
 
-:host > #search::shadow > .io-editor:empty:after {
+:host > #search::shadow > .io-editor:empty:after {  
   content: "Search...";
 }
 
