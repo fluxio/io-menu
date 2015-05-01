@@ -167,7 +167,7 @@ Example:
 
         // TODO
         context: {value: false, reflect: true},
-        _contextParent: null,
+        _parent: null,
 
         // TODO: change to disabled reflected
         enabled: true,
@@ -238,7 +238,11 @@ Example:
         this._expandPrimary = this.expandPrimary.bind(this);
         this._animate = this.animate.bind(this);
       },
-
+      attached: function() {
+        if (!this._parent) {
+          this._parent = this.parentNode.host || this.parentNode;
+        }
+      },
       detached: function() {
         this.stopAnimation();
       },
@@ -512,6 +516,11 @@ Example:
         previousOption = null;
         previousParent = null;
         this.searchString = '';
+        if (!this.context && !this.isSubmenu()) {
+          var rect = this._parent.getBoundingClientRect();
+          this.style.top = rect.top + 'px';
+          this.style.left = rect.left + 'px';
+        }
         if (this.expanded) {
           if (!this.fixed) this.style.visibility = 'hidden';
           // Fire asynchronously so that nudge is aware of the window bounds.
@@ -579,13 +588,11 @@ Example:
       contextChanged: function() {
         this.autoExpand = this.context;
         if (this.context) {
-          this._contextParent = this.contextParent || this.parentNode.host || this.parentNode;
-          this._contextParent.addEventListener('contextmenu', this._expand);
-          this._contextParent.addEventListener('click', this._expandPrimary);
+          this._parent.addEventListener('contextmenu', this._expand);
+          this._parent.addEventListener('click', this._expandPrimary);
         } else {
-          this._contextParent.removeEventListener('contextmenu', this._expand);
-          this._contextParent.removeEventListener('click', this._expandPrimary);
-          this._contextParent = null;
+          this._parent.removeEventListener('contextmenu', this._expand);
+          this._parent.removeEventListener('click', this._expandPrimary);
         }
       },
 
@@ -641,7 +648,6 @@ Example:
       },
       closeOverlay: function() {
         if (!this.isSubmenu() && this.__inOverlay) {
-          overlayLayer.removeElement(this);
           overlayLayer.opened = this.expanded;
           overlayLayer.removeEventListener('click', this._collapseFromOverlay);
           this.__inOverlay = false;

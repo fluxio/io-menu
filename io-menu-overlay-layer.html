@@ -36,60 +36,10 @@ adding/remvinf io-menu elements to overlay.
   <shadow></shadow>
 </template>
 <script>
-
-(function() {
-
-  var rect, style;
-
   Polymer({
     addElement: function(element) {
-      this.cacheElementStyle(element);
       this.super(arguments);
-      this.addLayoutReplacement(element);
-    },
-    removeElement: function(element) {
-      this.restoreElementStyle(element);
-      this.super(arguments);
-      this.removeLayoutReplacement(element);
-    },
-    cacheElementStyle: function(element) {
-      style = window.getComputedStyle(element);
-      rect = element.getBoundingClientRect();
-      element.__originalPosition = style.position;
-      element.__originalTop = style.top;
-      element.__originalLeft = style.left;
-      element.__originalWidth = rect.width + 'px';
-      element.__originalHeight = rect.height + 'px';
-      element.style.position = 'absolute';
-      element.style.top = rect.top + 'px';
-      element.style.left = rect.left + 'px';
-    },
-    restoreElementStyle: function(element) {
-      element.style.position = element.__originalPosition || 'inherit';
-      element.style.top = element.__originalTop || 'auto';
-      element.style.left = element.__originalLeft || 'auto';
-      delete element.__originalPosition;
-      delete element.__originalTop;
-      delete element.__originalLeft;
-      delete element.__originalWidth;
-      delete element.__originalHeight;
-    },
-    addLayoutReplacement: function(element) {
-      element.__layoutReplacement = document.createElement('div');
-      element.__layoutReplacement.style.position = element.__originalPosition;
-      element.__layoutReplacement.style.top = element.__originalTop;
-      element.__layoutReplacement.style.left = element.__originalLeft;
-      element.__layoutReplacement.style.width = element.__originalWidth;
-      element.__layoutReplacement.style.height = element.__originalHeight;
-      element.__parentNode.insertBefore(element.__layoutReplacement, element.__nextElementSibling);
-    },
-    removeLayoutReplacement: function(element) {
-      element.__layoutReplacement.parentNode.removeChild(element.__layoutReplacement);
-      delete element.__layoutReplacement;
     }
   });
-
-}());
-
 </script>
 </polymer-element>
