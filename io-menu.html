@@ -40,6 +40,7 @@ Example:
 @status alpha
 -->
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../io-value/io-string.html">
 
 <link rel="import" href="io-menu-option.html">
 <link rel="import" href="io-menu-overlay-layer.html">
@@ -155,11 +156,11 @@ Example:
         /**
          * Should opening the menu require ctrl key to be pressed?
          *
-         * @attribute requireCtrl
+         * @attribute ctrl
          * @type boolean
          * @default false
          */
-        requireCtrl: {value: false, reflect: true},
+        ctrl: {value: false, reflect: true},
 
         /**
          * TODO
@@ -453,7 +454,7 @@ Example:
 
       expand: function(event) {
         if (!this.enabled) return; //todo
-        if (this.requireCtrl && !event.ctrlKey) return; //todo
+        if (this.ctrl && !event.ctrlKey) return; //todo
         event.preventDefault();
         if (this.context) {
           this.style.top = event.y + 2 + 'px';
@@ -498,9 +499,9 @@ Example:
               // focus from it during the process of showing the menu.
               this.async(function() {
                 this.$.search.$.value.focus();
-              });
+              }.bind(this));
             }
-          });
+          }.bind(this));
           this.openOverlay();
           this.startAnimation();
         } else {
