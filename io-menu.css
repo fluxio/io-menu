@@ -17,10 +17,6 @@
 :host(:focus) {
   outline: 0;
 }
-:host([fixed]) {
-  display: inline-block;
-  position: relative;
-}
 
 :host([expanded]) {
   display: inline-block;
@@ -33,19 +29,8 @@
   top: 0;
   left: 100%;
 }
-:host(:not([horizontal])) {
+:host {
   padding: 0.25em 0;
-}
-:host([horizontal])::shadow > io-menu-option::shadow > io-menu {
-  top: 100%;
-  left: 0;
-}
-:host([horizontal])::shadow > io-menu-option {
-  display: inline-block;
-}
-:host([horizontal])::shadow > hr {
-  /* TODO: implement vertical divider */
-  display: none;
 }
 hr {
   border: 0;

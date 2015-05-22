@@ -55,7 +55,7 @@ Example:
       value="{{searchString}}"
       on-keydown="{{onSearchKeyUp}}">
     </io-string>
-    <template if="{{expanded || fixed}}">
+    <template if="{{expanded}}">
       <template if="{{search}}">
         <hr />
       </template>
@@ -73,9 +73,7 @@ Example:
               arguments="{{option.arguments}}"
               disabled="{{option.disabled}}"
               keepOpen="{{option.keepOpen}}"
-              tooltip="{{option.tooltip}}"
-              autoExpand="{{option.autoExpand || autoExpand}}"
-              horizontal="{{option.horizontal}}">
+              tooltip="{{option.tooltip}}">
             </io-menu-option>
           </template>
         </template>
@@ -121,24 +119,6 @@ Example:
         expanded: {value: false, reflect: true},
 
         /**
-         * Expand on pointer hover
-         *
-         * @attribute autoExpand
-         * @type boolean
-         * @default false
-         */
-        autoExpand: {value: false, reflect: true},
-
-        /**
-         * Keep visible when not expanded.
-         *
-         * @attribute fixed
-         * @type boolean
-         * @default false
-         */
-        fixed: {value: false, reflect: true},
-
-        /**
          * Should the menu stay open when an action is selected/clicked?
          *
          * @attribute keepOpen
@@ -155,15 +135,6 @@ Example:
          * @default 500
          */
         holdTime: 500,
-
-        /**
-         * horizontal orientation
-         *
-         * @attribute horizontal
-         * @type boolean
-         * @default false
-         */
-        horizontal: {value: false, reflect: true},
 
         // TODO
         context: {value: false, reflect: true},
@@ -262,7 +233,7 @@ Example:
         event.stopPropagation();
         var option = this.getHoveredItem(event);
         hoveredMenu = this;
-        if (option && option != previousOption && this.autoExpand) {
+        if (option && option != previousOption) {
           this.expanded = true;
           clearTimeout(timeout);
           if (v > 0 || option.parentNode != previousParent) {
@@ -301,11 +272,7 @@ Example:
         tempX = event.pageX - window.pageXOffset; // event.clientX
         tempY = event.pageY - window.pageYOffset; // event.clientY
 
-        if (this.horizontal) {
-          tempV = Math.abs(tempX - x) - Math.abs(tempY - y);
-        } else {
-          tempV = Math.abs(tempY - y) - Math.abs(tempX - x);
-        }
+        tempV = Math.abs(tempY - y) - Math.abs(tempX - x);
         v = tempV;
         x = tempX;
         y = tempY;
@@ -522,7 +489,7 @@ Example:
           this.style.left = rect.left + 'px';
         }
         if (this.expanded) {
-          if (!this.fixed) this.style.visibility = 'hidden';
+          this.style.visibility = 'hidden';
           // Fire asynchronously so that nudge is aware of the window bounds.
           this.async(function() {
             this.nudge();
@@ -542,30 +509,27 @@ Example:
         }
       },
       nudge: function() {
-        if (!this.fixed) {
-          var rect = this.getBoundingClientRect();
-          var style = window.getComputedStyle(this);
-          // nudge up
-          var bottomDist = rect.bottom - window.innerHeight;
-          if (bottomDist > 0) {
-            this.style.top = parseInt(style.top) - bottomDist + 'px';
+        var rect = this.getBoundingClientRect();
+        var style = window.getComputedStyle(this);
+        // nudge up
+        var bottomDist = rect.bottom - window.innerHeight;
+        if (bottomDist > 0) {
+          this.style.top = parseInt(style.top) - bottomDist + 'px';
+        }
+        // nudge left
+        var rightDist = rect.right - window.innerWidth;
+        if (rightDist > 0) {
+          if (this.isSubmenu()) {
+            this.style.left = - rect.width + 'px';
+          } else {
+            this.style.left = parseInt(style.left) - rightDist + 'px';
           }
-          // nudge left
-          var rightDist = rect.right - window.innerWidth;
-          if (rightDist > 0) {
-            if (this.isSubmenu()) {
-              this.style.left = - rect.width + 'px';
-            } else {
-              this.style.left = parseInt(style.left) - rightDist + 'px';
-            }
-          };
         };
         this.style.visibility = 'visible';
       },
 
       scroll: function() {
         if (hoveredMenu != this) return;
-        if (this.fixed) return;
         var rect = this.getBoundingClientRect();
         var style = window.getComputedStyle(this);
         if (tempY < 100 && rect.top < 0) {
@@ -586,7 +550,6 @@ Example:
         }
       },
       contextChanged: function() {
-        this.autoExpand = this.context;
         if (this.context) {
           this._parent.addEventListener('contextmenu', this._expand);
           this._parent.addEventListener('click', this._expandPrimary);
