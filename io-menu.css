@@ -7,7 +7,7 @@
   -ms-user-select: none;
   touch-action: none;
   display: none;
-  position: relative;
+  position: fixed;
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 0.2em;
   background: #f9f9f9;
@@ -20,9 +20,6 @@
 
 :host([expanded]) {
   display: inline-block;
-}
-:host([context]) {
-  position: fixed;
 }
 :host([issubmenu]) {
   position: absolute;

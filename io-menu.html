@@ -137,12 +137,12 @@ Example:
          */
         holdTime: 500,
 
-        // TODO
-        context: {value: false, reflect: true},
-        _parent: null,
-
-        // TODO: change to disabled reflected
-        enabled: true,
+        /**
+         * @attribute disabled
+         * @type boolean
+         * @default false
+         */
+        disabled: {value: false, reflect: true},
 
         /**
          * Should primary button activate the menu
@@ -191,6 +191,7 @@ Example:
 
       isSubmenu: false,
       optionElems: null,
+      _parent: null,
 
       eventDelegates: {
         'touchstart': 'onDown',
@@ -212,8 +213,10 @@ Example:
       },
       attached: function() {
         if (!this._parent) {
-          this._parent = this.parentNode.host || this.parentNode;
+          this._parent =  this.parentNode.host || this.parentNode;
         }
+        this._parent.addEventListener('contextmenu', this._expand);
+        this._parent.addEventListener('click', this._expandPrimary);
       },
       detached: function() {
         this.stopAnimation();
@@ -453,13 +456,11 @@ Example:
       },
 
       expand: function(event) {
-        if (!this.enabled) return; //todo
+        if (this.disabled) return; //todo
         if (this.ctrl && !event.ctrlKey) return; //todo
         event.preventDefault();
-        if (this.context) {
-          this.style.top = event.y + 2 + 'px';
-          this.style.left = event.x + 2 + 'px';
-        }
+        this.style.top = event.y + 2 + 'px';
+        this.style.left = event.x + 2 + 'px';
         this.expanded = true;
       },
       expandPrimary: function(event) {
@@ -484,11 +485,6 @@ Example:
         previousOption = null;
         previousParent = null;
         this.searchString = '';
-        if (!this.context && !this.isSubmenu()) {
-          var rect = this._parent.getBoundingClientRect();
-          this.style.top = rect.top + 'px';
-          this.style.left = rect.left + 'px';
-        }
         if (this.expanded) {
           this.style.visibility = 'hidden';
           // Fire asynchronously so that nudge is aware of the window bounds.
@@ -548,15 +544,6 @@ Example:
         this.optionElems = this.querySelectorAll('* /deep/ io-menu-option');
         for (var i = this.optionElems.length; i--;) {
           this.optionElems[i].update();
-        }
-      },
-      contextChanged: function() {
-        if (this.context) {
-          this._parent.addEventListener('contextmenu', this._expand);
-          this._parent.addEventListener('click', this._expandPrimary);
-        } else {
-          this._parent.removeEventListener('contextmenu', this._expand);
-          this._parent.removeEventListener('click', this._expandPrimary);
         }
       },
 
