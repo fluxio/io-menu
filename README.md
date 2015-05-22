@@ -1,6 +1,12 @@
-A custom menu element with a simple API and lots of customization options
-=========================================================================
+io-menu
+=======
 
-[DOCS](http://akirodic.com/io/io-menu)
+This [Polymer](https://www.polymer-project.org/) element is designed to provide simple, powerful and customizible context menu.
 
-[DEMO](http://akirodic.com/io/io-menu/demo.html)
+See documentation and examples below for more information.
+
+[DOCS](http://akirodic.com/components/io-menu)
+
+[DEMO](http://akirodic.com/components/io-menu/demo.html)
+
+![io-menu](http://akirodic.com/components/io-menu/preview.png "io-menu")
