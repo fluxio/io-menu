@@ -8,9 +8,12 @@
   "description": "A custom Polymer menu with a simple API and lots of customization options.",
   "main": "io-menu.html",
   "keywords": [
-     "menu", "context menu", "io", "ui", "polymer", "element", "web-components"
+    "menu", "context menu", "io", "ui", "polymer", "element", "web-components"
   ],
   "license": "MIT",
+  "ignore": [
+    "**/.*"
+  ],
   "dependencies": {
     "polymer": "Polymer/polymer#~0.5.6",
     "io-value": "arodic/io-value#~0.9.7",
