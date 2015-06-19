@@ -1,0 +1,134 @@
+<script type="text/javascript">
+  Polymer({
+    is: 'io-menu',
+    properties: {
+      searchString: {
+        value: '',
+        type: String
+      },
+      filteredOptions: {
+        value: []
+      },
+      tooltip: {
+        value: '',
+        type: String
+      },
+      sorted: {
+        value: false,
+        type: Boolean,
+        reflectToAttribute: true
+      },
+      sortedOptions: {
+        value: []
+      },
+    },
+    detached: function() {
+      this.stopAnimation();
+    },
+    startAnimation: function() {
+      this.playing = true;
+      this.animate();
+    },
+    stopAnimation: function() {
+      this.playing = false;
+    },
+    animate: function() {
+      if (!this.playing) return;
+      this.scroll();
+      requestAnimationFrame(this._animate);
+    },
+    onSearchKeyUp: function(event) {
+      event.stopPropagation();
+      if (event.which == 38) {
+        this.fire('io-change-option', { option: this.$.search, key: 'last' });
+      } else if (event.which == 40) {
+        this.fire('io-change-option', { option: this.$.search, key: 'first' });
+      } else if (event.which == 9) {
+        this.fire('io-change-option', { option: this.$.search, key: 'first' });
+      } else if (event.which == 27) {
+        this.expanded = false;
+      }
+    },
+    handleAction: function(event, details) {
+      if (this.keepOpen || details.keepOpen) {
+        event.stopPropagation();
+      } else {
+        this.collapse(event);
+      }
+    },
+    expandedChanged: function() {
+      previousOption = null;
+      previousParent = null;
+      this.searchString = '';
+      if (this.expanded) {
+        this.style.visibility = 'hidden';
+        // Fire asynchronously so that nudge is aware of the window bounds.
+        this.async(function() {
+          this.nudge();
+          if (this.search) {
+            // Fire asynchronously so that search box is in context and no other elements can take
+            // focus from it during the process of showing the menu.
+            this.async(function() {
+              this.$.search.$.value.focus();
+            }.bind(this));
+          }
+        }.bind(this));
+        this.openOverlay();
+        this.startAnimation();
+      } else {
+        this.closeOverlay();
+        this.stopAnimation();
+      }
+    },
+    scroll: function() {
+      if (hoveredMenu != this) return;
+      var rect = this.getBoundingClientRect();
+      var style = window.getComputedStyle(this);
+      if (tempY < 100 && rect.top < 0) {
+        var scrollSpeed = (100 - tempY) / 2000;
+        var overflow = rect.top;
+        this.style.top = parseInt(style.top) - Math.ceil(overflow * scrollSpeed) + 1 + 'px';
+      } else if (tempY > window.innerHeight - 100 && rect.bottom > window.innerHeight) {
+        var scrollSpeed = (100 - (window.innerHeight - tempY)) / 2000;
+        var overflow = (rect.bottom - window.innerHeight);
+        this.style.top = parseInt(style.top) - Math.ceil(overflow * scrollSpeed) - 1 + 'px';
+      }
+    },
+    optionsChanged: function() {
+      this.sortedChanged();
+    },
+    filterOptions: function(options) {
+      var filteredOptions = [];
+      if (this.searchString && options.length) {
+        options.forEach(function(option) {
+          // TODO: use regex
+          if (option.label && option.label.toLowerCase().search(this.searchString.toLowerCase()) != -1) {
+            filteredOptions.push(option);
+          }
+          if (option.options) {
+            filteredOptions = filteredOptions.concat(this.filterOptions(option.options));
+          }
+        }.bind(this));
+      }
+      return filteredOptions;
+    },
+    searchStringChanged: function() {
+      this.filteredOptions = this.filterOptions(this.options);
+    },
+    sortOptions: function(options) {
+      return options.concat().sort(function(a, b) {
+        if (a.label < b.label) {
+          return -1;
+        }
+        if (a.label > b.label) {
+          return 1;
+        }
+        return 0;
+      });
+    },
+    sortedChanged: function() {
+      if (!this.options) return;
+      this.sortedOptions = this.sorted ? this.sortOptions(this.options) : [];
+    }
+  });
+</script>

@@ -1,0 +1,94 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="io-menu-option.html">
+
+<dom-module id="io-menu-group">
+  <style>
+    :host {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: rgba(255, 255, 255, 1);
+      padding: 0.25em 0;
+      border: 1px solid rgba(0, 0, 0, 0.125);
+      border-top: none;
+      border-left: none;
+      border-radius: 0.2em;
+      box-shadow: 0.2em 0.2em 0.1em rgba(0, 0, 0, 0.25);
+    }
+    :host([opened]) {
+      display: block;
+    }
+  </style>
+  <template>
+    <template is="dom-repeat" items="{{options}}">
+      <io-menu-option
+          options="{{item.options}}"
+          label="{{item.label}}"
+          info="{{item.info}}"
+          icon="{{item.icon}}"
+          action="{{item.action}}"
+          button="{{item.button}}"
+          arguments="{{item.arguments}}"
+          disabled="{{item.disabled}}"
+          tooltip="{{item.tooltip}}"
+          type="{{item.type}}">
+      </io-menu-option>
+    </template>
+  </template>
+</dom-module>
+<script type="text/javascript">
+  Polymer({
+    is: 'io-menu-group',
+    properties: {
+      opened: {
+        value: false,
+        type: Boolean,
+        reflectToAttribute: true
+      },
+      x: {
+        value: null,
+        type: Number,
+        observer: '_xChanged'
+      },
+      y: {
+        value: null,
+        type: Number,
+        observer: '_yChanged'
+      },
+      options: {
+        value: null,
+        type: Array
+      }
+    },
+    _nudge: function() {
+      var rect = this.getBoundingClientRect();
+      // nudge up
+      var bottomDist = rect.bottom - window.innerHeight;
+      if (bottomDist > 0) {
+        this.y = window.innerHeight - rect.height;
+      }
+      // nudge left
+      var rightDist = rect.right - window.innerWidth;
+      if (rightDist > 0) {
+        if (this.parentNode.localName === 'io-menu-option') {
+          this.x = - rect.width;
+        } else {
+          this.x = window.innerWidth - rect.width;
+        }
+      }
+    },
+    _xChanged: function() {
+      this.style.left = this.x + 'px';
+      this.async(function() {
+        this._nudge();
+      }.bind(this));
+    },
+    _yChanged: function() {
+      this.style.top = this.y + 'px';
+      this.async(function() {
+        this._nudge();
+      }.bind(this));
+    }
+  });
+</script>

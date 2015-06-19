@@ -1,198 +1,324 @@
-<!--
-Menu option used internally by io-menu.
-You should never need to create this element explicitly.
-It is automatically created by io-menu.
-
-@element io-menu-option
-@homepage https://github.com/arodic/io-menu
-@demo http://akirodic.com/components/io-menu/demo.html
-@blurb Menu option used internally by io-menu.
-@status alpha
--->
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-icons/core-icons.html">
-<link rel="import" href="../core-icon/core-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../io-tooltip/io-tooltip.html">
+<link rel="import" href="io-menu-group.html">
 
-<polymer-element name="io-menu-option" tabindex="0">
+<dom-module id="io-menu-option">
+  <style>
+    :host {
+      position: relative;
+      padding: 0 0.4em 0.125em 0.4em;
+      display: -webkit-flex;
+      display: flex;
+    }
+    :host([opened]) {
+      background: rgba(63, 127, 255, 0.5);
+      color: #fff;
+    }
+    :host(:focus) {
+      outline: 0;
+    }
+    :host([opened]:focus) {
+      background: rgba(63, 127, 255, 1.0);
+      color: #fff;
+    }
+    :host([inactive]),
+    :host([disabled]) {
+      opacity: 0.5;
+    }
+    :host([type=separator]) {
+      pointer-events: none;
+      height: 0px;
+      border-top: 1px solid rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      margin: 0.125em 0;
+    }
+    :host([type=separator]) > * {
+      display: none;
+    }
+    iron-icon {
+      top: 0.1em;
+      width: 1em !important;
+      height: 1em !important;
+    }
+    .expandicon {
+      top: 0.05em !important;
+    }
+    .label,
+    .info {
+      white-space: nowrap;
+      cursor: default;
+      margin: 0 0.25em;
+      -webkit-flex: 1;
+      flex: 1;
+    }
+    .info {
+      text-align: right;
+    }
+  </style>
   <template>
-    <link href="io-menu-option.css" rel="stylesheet" type="text/css" shim-shadowdom>
-    <template if="{{expanded && (options.length || tooltip)}}">
-      <io-menu expanded
-        options="{{options}}"
-        parentHeight="{{rect.heigh}}"
-        parentWidth="{{rect.width}}"
-        tooltip="{{tooltip}}"
-        keepOpen="{{keepOpen}}"
-        issubmenu>
-      </io-menu>
+    <iron-icon class="icon" icon="{{icon}}"></iron-icon>
+    <span class="label">{{label}}</span>
+    <span class="info">{{info}}</span>
+    <template is="dom-if" if="{{options}}">
+      <iron-icon class="expandicon" icon="icons:chevron-right"></iron-icon>
     </template>
-    <template if="{{icon}}"><core-icon icon="{{icon}}"></core-icon></template>
-    <span id="label" class="{{icon ? 'has-icon' : ''}}">{{label}}</span>
-    <!-- <template if="{{options.length}}"><core-icon icon="chevron-right"></core-icon></template> -->
-    <template if="{{secondaryLabel}}"><div id="secondary-label">{{secondaryLabel}}</div></template>
+    <template is="dom-if" if="{{tooltip}}" restamp>
+      <io-tooltip message="{{tooltip}}"></io-tooltip>
+    </template>
   </template>
-  <script type="text/javascript">
-    Polymer('io-menu-option', {
-      publish: {
+</dom-module>
+<script type="text/javascript">
+(function() {
 
-        /**
-         * Array of item objects.
-         *
-         * @attribute options
-         * @type array
-         * @default []
-         */
-        options: null,
+  var x = 0, y = 0, v = 0;
+  var previousOption;
+  var previousParent;
+  var timeoutOpen;
+  var timeoutReset;
+  var WAIT_TIME = 1000;
 
-        /**
-         * Label to be displayed with the option
-         *
-         * @attribute label
-         * @type string
-         * @default ''
-         */
-        label: {value: '', reflect: true},
+  var closeMenuGroups = function(menuGroup) {
+    var menuOptions = menuGroup.querySelectorAll('io-menu-option');
+    for (var i = 0; i < menuOptions.length; i++) {
+      menuOptions[i].opened = false;
+      // TOD: link opened attribute between optiona and submenu
+      if (menuOptions[i].options && menuOptions[i].options._menuGroup) {
+        closeMenuGroups(menuOptions[i].options._menuGroup);
+        menuOptions[i].options._menuGroup.opened = false;
+      } 
+    }
+  };
 
-        /**
-         * Secondary label/information to be displayed below the primary label.
-         *
-         * @attribute secondaryLabel
-         * @type string
-         * @default ''
-         */
-        secondaryLabel: {value: '', reflect: true},
-
-        /**
-         * Icon to be displayed with the option
-         *
-         * @attribute icon
-         * @type string
-         * @default ''
-         */
-        icon: {value: '', reflect: true},
-
-        /**
-         * Function to be fired when option is selected
-         *
-         * @attribute action
-         * @type function
-         * @default null
-         */
-        action: null,
-
-        /**
-         * Should the menu stay open when an action is selected/clicked?
-         *
-         * @attribute keepOpen
-         * @type boolean
-         * @default false
-         */
-        keepOpen: {value: false, reflect: true},
-
-        /**
-         * Reference to a button element in case the action requires button to be clicked.
-         *
-         * @attribute button
-         * @type HTMLElement
-         * @default null
-         */
-        button: null,
-
-        /**
-         * Arguments to be passed into action function
-         *
-         * @attribute arguments
-         * @type Array
-         * @default null
-         */
-        arguments: null,
-
-        /**
-         * Tooltip to be displayed with the option
-         *
-         * @attribute tooltip
-         * @type string
-         * @default ''
-         */
-        tooltip: {value: '', reflect: true},
-
-        /**
-         * Expanded state
-         *
-         * @attribute expanded
-         * @type boolean
-         * @default true
-         */
-        expanded: {value: false, reflect: true},
-
-        disabled: {value: false, reflect: true},
-        // TODO
-        active: {value: false, reflect: true},
+  Polymer({
+    is: 'io-menu-option',
+    properties: {
+      opened: {
+        type: Boolean,
+        observer: '_openedChanged',
+        reflectToAttribute: true
       },
-      observe: {
-        'options label icon action active disabled expanded' : 'update'
+      /**
+       * Array of item objects.
+       */
+      options: {
+        type: Array
       },
-      eventDelegates: {
-        'keydown': 'keydownAction',
-        'down': 'tapAction'
+      /**
+       * Label to be displayed with the option
+       */
+      label: {
+        type: String
       },
-      ready: function() {
-        function stopPropagation(event) { event.stopPropagation(); event.preventDefault(); }
-        PolymerGestures.addEventListener(this, 'down', stopPropagation);
-        PolymerGestures.addEventListener(this, 'touchstart', stopPropagation);
-        PolymerGestures.addEventListener(this, 'mousedown', stopPropagation);
+      /**
+       * Secondary label/information to be displayed below the label.
+       */
+      info: {
+        type: String
       },
-      tapAction: function(event) {
-        if (this.disabled) return;
-        if (this.button) {
-          this.button.click();
-        }
-        if (typeof this.action == 'function') {
-          if (this.arguments instanceof Array) {
-            this.action.apply(null, this.arguments);
-          } else {
-            this.action.apply(null, [this.arguments]);
-          }
-        }
-        if (typeof this.action === 'function' || this.arguments || this.button) {
-          this.fire('io-menu-option-clicked', {
-            label: this.label,
-            action: this.action,
-            keepOpen: this.keepOpen,
-            arguments: this.arguments
-          });
-          // TODO: debug collapse
-          this.expanded = false;
-        }
+      /**
+       * Icon to be displayed with the option
+       */
+      icon: {
+        type: String
       },
-      keydownAction: function(event) {
-        event.stopPropagation();
-        event.preventDefault();
-        if (event.which == 13) {
-          if (this.disabled) return;
-          // this.fireAction(event);
-          this.tapAction(event); // TODO: test
-        } else if (event.which == 37) {
-          this.fire('io-change-option', { option: this, key: 'left' });
-        } else if (event.which == 38) {
-          this.fire('io-change-option', { option: this, key: 'up' });
-        } else if (event.which == 39) {
-          this.fire('io-change-option', { option: this, key: 'right' });
-        } else if (event.which == 40) {
-          this.fire('io-change-option', { option: this, key: 'down' });
-        } else if (event.which == 9) {
-          this.fire('io-change-option', { option: this, key: 'tab' });
-        } else if (event.which == 27) {
-          this.fire('io-change-option', { option: this, key: 'close' });
-        }
+      /**
+       * Function to be fired when option is selected
+       */
+      action: {
+        type: Function
       },
-      update: function() {
-        this.active = (this.action && !this.disabled) ||
-          (this.arguments && !this.disabled) ||
-          (this.options && this.options.length && !this.disabled);
-        // TODO: timeout?
-        this.rect = this.getBoundingClientRect();
+      /**
+       * Arguments to be passed to action when invoked
+       */
+      arguments: {
+        type: Array
+      },
+      /**
+       * option is disabled if true
+       */
+      disabled: {
+        type: Boolean,
+        reflectToAttribute: true
+      },
+      /**
+       * Tooltip to be displayed with the option
+       */
+      tooltip: {
+        value: '',
+        type: String
+      },
+      /**
+       * option is disabled if true
+       */
+      type: {
+        value: '',
+        type: String,
+        reflectToAttribute: true
+      },
+      /**
+       * option is inactive is no action, options or arguments are set
+       */
+      inactive: {
+        type: Boolean,
+        reflectToAttribute: true
+      },
+      /**
+       * Reference to a button element in case the action requires button to be clicked.
+       */
+      // TODO
+      button: {
+        type: HTMLElement
+      },
+      //
+      _menuGroup: {
+        type: HTMLElement
       }
-    });
-  </script>
-</polymer-element>
+    },
+    hostAttributes: {
+      tabindex: 1
+    },
+    listeners: {
+      'mousemove': '_onMousemove',
+      'touchmove': '_onMousemove',
+      'mousedown': '_onMousedown',
+      'keydown': '_onKeydown',
+      'click': '_onClick'
+    },
+    created: function() {
+      this._menuGroup = document.createElement('io-menu-group');
+      this._menuGroup._parent = this;
+      //
+      var stopper = function(event) { event.stopPropagation(); };
+      this.addEventListener('click', stopper);
+      this.addEventListener('dblclick', stopper);
+      this.addEventListener('contextmenu', stopper);
+      this.addEventListener('mouseup', stopper);
+      this.addEventListener('mousedown', stopper);
+      this.addEventListener('touchstart', stopper);
+      this.addEventListener('touchend', stopper);
+      this.addEventListener('mousemove', stopper);
+      this.addEventListener('touchmove', stopper);
+      // TODO: update
+    },
+    ready: function() {
+      this.inactive = !this.action && !this.arguments && (!this.options || !this.options.length);
+    },
+    _onMousemove: function(event) {
+      if (event.changedTouches) event = event.changedTouches[0];
+      event.clientX = event.clientX;
+      event.clientY = event.clientY;
+      v = Math.abs(event.clientY - y) - Math.abs(event.clientX - x);
+      x = event.clientX;
+      y = event.clientY;
+      if (this !== previousOption) {
+        clearTimeout(timeoutOpen);
+        clearTimeout(timeoutReset);
+        if (v > 0 || this.parentNode !== previousParent) {
+          previousOption = this;
+          this._openGroup();
+        } else {
+          timeoutOpen = setTimeout(function() {
+            previousOption = this;
+            this._openGroup();
+          }.bind(this), WAIT_TIME);
+        }
+        previousParent = this.parentNode;
+        timeoutReset = setTimeout(function() {
+          previousOption = null;
+          previousParent = null;
+        }.bind(this), WAIT_TIME + 1);
+      }
+    },
+    _onMousedown: function(event) {
+      this._openGroup();
+    },
+    _onKeydown: function(event) {
+      var siblings = Array.prototype.slice.call(
+            this.parentNode.querySelectorAll(
+              'io-menu-option:not([type=separator]):not([disabled]):not([inactive])'
+            )
+          );
+      var index = siblings.indexOf(this);
+
+      if (event.which == 13) {
+        if (this.disabled) return;
+        event.preventDefault();
+        this._onClick(event); // TODO: test
+
+      } else if (event.which == 37) { // LEFT
+        event.preventDefault();
+        if (this.parentNode._parent) {
+          this.parentNode._parent._openGroup();
+        }
+
+      } else if (event.which == 38) { // UP
+        event.preventDefault();
+        siblings[(index + siblings.length - 1) % (siblings.length)]._openGroup();
+
+      } else if (event.which == 39) { // RIGHT
+        event.preventDefault();
+        if (this.options && this.options.length) {
+          this._menuGroup.querySelector('io-menu-option')._openGroup();
+          // TODO: if #1 is inactive/disabled, find first available option.
+        }
+
+      } else if (event.which == 40) { // DOWN
+        event.preventDefault();
+        siblings[(index + 1) % (siblings.length)]._openGroup();
+
+      } else if (event.which == 9) { // TAB
+        event.preventDefault();
+        if (this.options && this.options.length) {
+          this._menuGroup.querySelector('io-menu-option')._openGroup();
+        } else if (index < siblings.length - 1) {
+          siblings[(index + 1)]._openGroup();
+        } else if (this.parentNode._parent) {
+          //TODO: find first available option in sequence.
+        }
+
+      } else if (event.which == 27) { // ESC
+        event.preventDefault();
+        this.fire('io-menu-close', this);
+      }
+    },
+    _onClick: function(event) {
+      if (this.disabled) return;
+      if (this.button) {
+        // TODO: test
+        this.button.click();
+      }
+      if (typeof this.action === 'function') {
+        this.action.apply(null, this.arguments);
+      }
+      if (typeof this.action === 'function' || this.arguments || this.button) {
+        // TODO: doc
+        this.fire('io-menu-close', this);
+      }
+    },
+    _openGroup: function() {
+      closeMenuGroups(this.parentNode);
+      if (!this.disabled && this.options && this.parentNode.opened) {
+        var rect = this.getBoundingClientRect();
+        this._menuGroup.x = rect.right + 1;
+        this._menuGroup.y = rect.top - 4;
+        this._menuGroup.options = this.options;
+        this.options._menuGroup = this._menuGroup;
+        this.fire('io-menu-open-group', this._menuGroup);
+      }
+      if (!this.disabled && !this.inactive) {
+        this.opened = true;
+        this.focus();
+      }
+    },
+    _openedChanged: function() {
+      if (this.opened) {
+        this.setAttribute('tabindex', 1);
+      } else {
+        this.removeAttribute('tabindex');
+      }
+    }
+  });
+}());
+</script>
