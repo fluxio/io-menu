@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf8">
   <title>io-menu demo</title>
   <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
   <link rel="import" href="../polymer/polymer.html">
   <link rel="import" href="io-menu.html">
+  <link rel="import" href="../io-help/io-help-line.html">
   <style type="text/css">
     html {
       -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -17,63 +18,74 @@
       height: 100%;
       margin: 0;
     }
+    io-help-line {
+      background: white;
+    }
   </style>
 </head>
 <body>
-  <io-menu></io-menu>
+  <io-menu search></io-menu>
   Click or tap anywhere!
+  <io-help-line></io-help-line>
   <script>
   HTMLImports.whenReady(function() {
+
     var menu = document.querySelector('io-menu');
+
+    var actionOptions = [
+          {
+            label: 'Action',
+            action: function() {alert('This is an action!');},
+            help: 'You can se any function as an action.',
+            tooltip: 'Click me!'
+          },
+          {
+            label: 'Arguments',
+            action: function(msg) {alert(msg);},
+            value: 'This is an argument',
+            help: 'You can pass value as arguments to any action.'
+          }
+        ]
+
+    var suboptions2 = [
+      {label: 'Suboption7'},
+      {label: 'Suboption8'},
+      {label: 'Suboption9'}
+    ];
+    var suboptions1 = [
+      {label: 'Suboption4', options: suboptions2},
+      {label: 'Suboption5', options: suboptions2},
+      {label: 'Suboption6', options: suboptions2}
+    ];
+    var suboptions0 = [
+      {label: 'Suboption1', options: suboptions1},
+      {label: 'Suboption2', options: suboptions1},
+      {label: 'Suboption3', options: suboptions1}
+    ];
+
+    var longOptions = [];
+    for (var i = 0; i < 128; i++) {
+      var number = String(Math.random());
+      longOptions.push({
+        label: number,
+        action: function(num) {console.log('You clicked', num);},
+        value: number
+      })
+    } 
+
     menu.options = [
-      {label: 'Options', icon: 'icons:check', options: [
-        {label: 'Option1', options: [
-          {label: 'Suboption1', action: function() {alert('Suboption1');}, tooltip: 'This is a tooltip.'},
-          {label: 'Suboption2', action: function(msg) {alert(msg);}, arguments: ['Suboption2']},
-          {label: 'Suboption3', action: function(msg1, msg2) {alert(msg1 + msg2);}, arguments: ['Suboption', '3']}
-        ]},
-        {label: 'Option2', options: [
-          {label: 'Suboption4', action: alert, arguments: ['Suboption4']},
-          {label: 'Suboption5', action: alert, arguments: ['Suboption', '5']},
-          {label: 'Suboption6', action: alert, arguments: 'Suboption 6'}
-        ]},
-        {label: 'Option3', options: [
-          {label: 'suboption7'},
-          {label: 'suboption8'},
-          {label: 'suboption9'}
-        ]}
-      ]},
+      {label: 'Actions', icon: 'icons:list', info: '', options: actionOptions},
+      {label: 'Suboptions', icon: 'icons:check', options: suboptions0},
+      {label: 'empty options', options: [], help: 'This item has an empty array as options.'},
+      {label: 'Long', options: longOptions, help: 'This item a very long list of options.'},
       {type: 'separator'},
-      {label: 'Suboptions', options: [
-        {label: 'Suboption1', options: [
-          {label: 'Suboption2', options: [
-            {label: 'suboption3a'},
-            {label: 'suboption3b'},
-            {label: 'suboption3c'},
-            {label: 'Suboption3d', options: [
-              {label: 'Suboption4', options: [
-                {label: 'Suboption5', options: [
-                  {label: 'Suboption6'}
-                ]}
-              ]}
-            ]}
-          ]}
-        ]}
-      ]},
-      {label: 'empty'},
+      {label: 'empty', help: 'this is an option with no data.'},
       {label: 'disabled', disabled: true},
-      {label: 'action', action: function() {}},
-      {label: 'with tooltip', tooltip: 'Hey, I am a tooltip!'},
-      {label: 'arguments', arguments: []},
-      {label: 'empty options', options: []},
-      {label: 'Icon and info', icon: 'icons:content-cut'},
-      {label: 'Icon and info', icon: 'icons:content-paste', info: 'V'},
-      {label: 'icon with suboptions', icon: 'icons:chevron-right', info: 'Z', options: [
-          {label: 'suboption7'},
-          {label: 'suboption8'},
-          {label: 'suboption9'}
-        ]},
-      {label: 'Clear Browsing Data', icon: 'icons:gif', arguments: []}
+      {label: 'tooltip', tooltip: 'Hey, I am a tooltip!'},
+      {label: 'help', help: 'Broadcasts an io-help message'},
+      {label: 'Cut', icon: 'icons:content-cut', info: '⌘X'},
+      {label: 'Paste', icon: 'icons:content-paste', info: '⌘V'},
+      {label: 'Undo', info: '⌘Z', options: suboptions0}
     ];
   });
   </script>
