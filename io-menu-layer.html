@@ -41,21 +41,21 @@
     listeners: {
       'mouseup': '_onMouseup'
     },
-    // created: function() {
-    //   var stopper = function(event) {
-    //     if (event.target === this) {
-    //       event.stopPropagation();
-    //       event.preventDefault();
-    //     }
-    //   }.bind(this);
-    //   // this.addEventListener('click', stopper);
-    //   // this.addEventListener('dblclick', stopper);
-    //   // this.addEventListener('contextmenu', stopper);
-    //   // this.addEventListener('mouseup', stopper);
-    //   // this.addEventListener('mousedown', stopper);
-    //   // this.addEventListener('touchstart', stopper);
-    //   // this.addEventListener('touchend', stopper);
-    // },
+    created: function() {
+      var stopper = function(event) {
+        if (event.target === this) {
+          event.stopPropagation();
+          event.preventDefault();
+        }
+      }.bind(this);
+      this.addEventListener('click', stopper);
+      this.addEventListener('dblclick', stopper);
+      this.addEventListener('contextmenu', stopper);
+      this.addEventListener('mouseup', stopper);
+      this.addEventListener('mousedown', stopper);
+      this.addEventListener('touchstart', stopper);
+      this.addEventListener('touchend', stopper);
+    },
     attached: function() {
       document.body.addEventListener('io-menu-open-group', this._onOpen.bind(this));
       document.body.addEventListener('io-menu-option-clicked', this._onMenuClose.bind(this));
