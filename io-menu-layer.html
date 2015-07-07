@@ -43,8 +43,8 @@
     },
     created: function() {
       var stopper = function(event) {
+        event.stopPropagation();
         if (event.target === this) {
-          event.stopPropagation();
           event.preventDefault();
         }
       }.bind(this);
