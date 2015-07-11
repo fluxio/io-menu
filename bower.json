@@ -1,6 +1,6 @@
 {
   "name": "io-menu",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/arodic/io-menu",
   "authors": [
     "Aleksandar Rodic <aleksandar.xyz@gmail.com>"
@@ -15,9 +15,9 @@
     "**/.*"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#~1.0.5",
-    "io-tooltip": "arodic/io-tooltip#~1.0.0",
-    "io-help": "arodic/io-help#~1.0.0",
+    "polymer": "Polymer/polymer#~1.0.6",
+    "io-tooltip": "arodic/io-tooltip#~1.0.1",
+    "io-help": "arodic/io-help#~1.0.1",
     "iron-icons": "PolymerElements/iron-icons#~1.0.3"
   }
 }

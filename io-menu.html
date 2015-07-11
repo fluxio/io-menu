@@ -2,18 +2,19 @@
 <link rel="import" href="io-menu-layer.html">
 <link rel="import" href="io-menu-group.html">
 
+<!--
+`<io-menu>` is a custom Polymer element for context menus.
+
+Example:
+
+    <io-menu options="{{options}}"></io-menu>
+
+@demo demo/index.html Basic Demo
+-->
+
 <dom-module id="io-menu"></dom-module>
 <script>
 (function() {
-  /*
-  `<io-menu>` is a custom Polymer element for context menus.
-
-  Example:
-
-      <io-menu options="{{options}}"></io-menu>
- 
-  @demo demo.html
-  */
   Polymer({
     is: 'io-menu',
     properties: {
