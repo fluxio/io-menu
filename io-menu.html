@@ -49,6 +49,7 @@ Example:
           <template if="{{option.type == 'divider'}}"><hr /></template>
           <template if="{{option.type != 'divider'}}">
             <io-menu-option
+              class="qasel_io-menu-option_{{parentLabel | makeValidClass}}_label_{{option.label | makeValidClass}}"
               options="{{option.options}}"
               label="{{option.label}}"
               secondaryLabel="{{option.secondaryLabel}}"
@@ -170,7 +171,9 @@ Example:
          * @default false
          */
         sorted: {value: false, reflect: true},
-        sortedOptions: []
+        sortedOptions: [],
+
+        parentLabel: null
       },
 
       isSubmenu: false,
