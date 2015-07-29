@@ -1,6 +1,6 @@
 {
   "name": "io-menu",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "homepage": "https://github.com/fluxio/io-menu",
   "authors": [
     "Aleksandar Rodic <aleksandar.xyz@gmail.com>"
@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#~0.5.4",
-    "io-value": "fluxio/io-value#~0.9.12",
+    "io-value": "fluxio/io-value#~0.9.13",
     "core-icons": "Polymer/core-icons#~0.5.5",
     "core-overlay": "Polymer/core-overlay#~0.5.5"
   }
