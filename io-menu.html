@@ -37,6 +37,7 @@ Example:
     </template>
     <io-string style="display: {{search ? 'block' : 'none'}}" id="search"
       updateImmediate
+      placeholder="{{placeholder}}"
       value="{{searchString}}"
       on-keydown="{{onSearchKeyUp}}">
     </io-string>
@@ -103,6 +104,15 @@ Example:
          * @default true
          */
         expanded: {value: false, reflect: true},
+
+        /**
+         * Placeholder text shown on empty input.
+         *
+         * @attribute placeholder
+         * @type string
+         * @default "string"
+         */
+        placeholder: {value:"string", reflect: true},
 
         /**
          * Should the menu stay open when an action is selected/clicked?
