@@ -485,6 +485,9 @@ Example:
               }.bind(this));
             }
           }.bind(this));
+          var rect = this._parent.getBoundingClientRect();
+          this.style.top = rect.top + 'px';
+          this.style.left = rect.right + 'px';
           this.openOverlay();
           this.startAnimation();
         } else {
