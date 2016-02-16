@@ -38,7 +38,7 @@
   </style>
   <template>
     <template is="dom-if" if="{{search}}">
-      <input type="text" on-keydown="_onSearchKeyUp" on-focus="_closeSubmenus" />
+      <input type="text" placeholder="[[placeholder]]" on-keydown="_onSearchKeyUp" on-focus="_closeSubmenus" />
     </template>
     <template is="dom-repeat" items="{{_filteredOptions}}">
       <io-menu-option
@@ -101,7 +101,8 @@
       },
       _searchString: {
         type: String
-      }
+      },
+      placeholder: String
     },
     listeners: {
       'mouseenter': '_onMouseenter',
