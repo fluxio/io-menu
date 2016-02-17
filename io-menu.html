@@ -65,7 +65,10 @@ Example:
       _menuGroup: {
         value: null,
         type: HTMLElement
-      }
+      },
+
+      //placeholder for search menu
+      placeholder: String
     },
     created: function() {
       this.__openGroup = this._openGroup.bind(this);
@@ -109,6 +112,7 @@ Example:
       this._menuGroup.options = this.options;
       this._menuGroup.search = this.search;
       this._menuGroup.sort = this.sort;
+      this._menuGroup.placeholder = this.placeholder;
       this.options._menuGroup = this._menuGroup;
       this.fire('io-menu-open-group', this._menuGroup);
     }
