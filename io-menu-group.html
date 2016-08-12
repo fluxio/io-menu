@@ -4,9 +4,6 @@
 <dom-module id="io-menu-group">
   <style>
     :host {
-      overflow-y: scroll;
-      overflow-x: hidden;
-      max-height: 80%;
       display: none;
       position: absolute;
       top: 0;
@@ -152,6 +149,16 @@
         if (bottomDist > 0) {
           this.y = window.innerHeight - rect.height;
         }
+        // SCROLL IF CANT FIT WINDOW
+        // if (y < 100 && rect.top < 0) {
+        //   var scrollSpeed = (100 - y) / 5000;
+        //   var overflow = rect.top;
+        //   this.y = this.y - Math.ceil(overflow * scrollSpeed) + 1;
+        // } else if (y > window.innerHeight - 100 && rect.bottom > window.innerHeight) {
+        //   var scrollSpeed = (100 - (window.innerHeight - y)) / 5000;
+        //   var overflow = (rect.bottom - window.innerHeight);
+        //   this.y = this.y - Math.ceil(overflow * scrollSpeed) - 1;
+        // }
         // TODO: also scroll on key commands
         // nudge left
         var rightDist = rect.right - window.innerWidth;
@@ -202,7 +209,7 @@
       }.bind(this));
     },
     _yChanged: function() {
-      this.style.top = (this.y - 50) + 'px';
+      this.style.top = this.y + 'px';
       this.async(function() {
         this._nudge();
       }.bind(this));
